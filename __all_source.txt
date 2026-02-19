@@ -1,0 +1,1810 @@
+﻿=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\components\Button.jsx ===
+import React from "react";
+
+const Button = ({ text }) => {
+  return (
+    <div className="w-48 h-14 rounded-full bg-primary flex-center mt-10">
+      <p className="text-black font-semibold">{text}</p>
+    </div>
+  );
+};
+
+export default Button;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\components\CardsContainer.jsx ===
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Canvas } from "@react-three/fiber";
+
+// Internal imports
+import { fictionalPlanetCardLists } from "../constants";
+import { arrowImg } from "../utils";
+import SmallPlanetsViewer from "../PlanetsComponents/SmallPlanetsViewer";
+
+const CardsContainer = ({ restrict }) => {
+  const nav = useNavigate();
+
+  const handleClick = (id) => {
+    nav(`/planets/${id}`);
+  };
+
+  const [array, setArray] = useState([]);
+
+  useEffect(() => {
+    if (restrict) {
+      setArray(fictionalPlanetCardLists.slice(0, 3));
+    } else {
+      setArray(fictionalPlanetCardLists);
+    }
+  }, []);
+
+  return (
+    <div className="flex-center gap-0 md:gap-14 flex-wrap mt-28">
+      {array.map((list) => (
+        <div className={`w-96 h-96`} key={list.id}>
+          <div className="relative h-full bg-rectangle-card-bg bg-no-repeat bg-center bg-contain">
+            <div className="w-60 h-60 absolute z-50 -top-14 -left-14">
+              <Canvas>
+                <SmallPlanetsViewer tex={list.map} />
+              </Canvas>
+            </div>
+            <img
+              src={arrowImg}
+              alt="arrow"
+              className="arrow"
+              onClick={() => handleClick(list.id)}
+            />
+
+            {/* info texts */}
+            <div className="flex flex-col h-full justify-end">
+              <p className="text-center font-orbiton font-semibold text-3xl">
+                {list.title}
+              </p>
+              <p className="text-center sub-text mb-10">{list.subtitle}</p>
+              <div className="flex justify-center gap-10 mb-24">
+                <span>
+                  <p className="font-orbiton text-center">{list.km}</p>
+                  <p className="sub-text text-center">Radius</p>
+                </span>
+                <span>
+                  <p className="font-orbiton text-center">{list.g}</p>
+                  <p className="sub-text text-center">Gravity</p>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default CardsContainer;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\components\CommonViewer.jsx ===
+import { OrbitControls, Sparkles } from "@react-three/drei";
+import React from "react";
+
+const CommonViewer = ({ sparkle, rectAreaLight }) => {
+  return (
+    <>
+      <OrbitControls
+        enableZoom={false}
+        rotateSpeed={0.2}
+        autoRotate
+        autoRotateSpeed={0.2}
+        maxPolarAngle={Math.PI / 2}
+        minPolarAngle={Math.PI / 2}
+        enablePan={false}
+      />
+      <ambientLight intensity={0.5} />
+      <Sparkles
+        count={500}
+        scale={[15, 5, 10]}
+        size={1.5}
+        speed={2}
+        color={sparkle}
+      />
+      <rectAreaLight
+        rotation={[Math.PI / 2, 0, 0]}
+        position={[0, -5, -1]}
+        intensity={10}
+        color={rectAreaLight}
+      />
+    </>
+  );
+};
+
+export default CommonViewer;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\components\EarthInfo.jsx ===
+import React from "react";
+import { earthInfo } from "../constants";
+
+const EarthInfo = () => {
+  return (
+    <div className="lg:w-[40vw]">
+      <div className="flex justify-center gap-16 my-20 flex-wrap">
+        {earthInfo.map((info) => (
+          <div
+            className={`info-text ${info.id === 3 && "mb-96 md:m-0"}`}
+            key={info.id}
+          >
+            <p className="info-sub-text">{info.title}</p>
+            <p className="info-number">{info.number}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default EarthInfo;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\components\Nav.jsx ===
+import React from "react";
+import { useNavigate } from "react-router-dom";
+
+// Import internals
+import { backImg } from "../utils";
+
+const Nav = ({ border, isBack }) => {
+  const home = useNavigate();
+  const planet = useNavigate();
+  const back = useNavigate();
+
+  const handleHome = () => {
+    home("/");
+  };
+
+  const handlePlanet = () => {
+    planet("/planets");
+  };
+
+  const handleBack = () => {
+    back("/planets");
+  };
+
+  return (
+    <nav
+      className={`flex justify-between py-7 border-b-dim relative z-50 ${
+        border ? "border-b" : "border-0"
+      } z-10`}
+    >
+      {isBack ? (
+        <div className="flex cursor-pointer ">
+          <img src={backImg} alt="back arrow" />
+          <p
+            className={`sub-text ms-2 transition-all ${
+              isBack ? "nav-hover-text-isBack" : "nav-hover-text-notBack"
+            }`}
+            onClick={handleBack}
+          >
+            Back
+          </p>
+        </div>
+      ) : (
+        <h1 className="font-orbiton font-semibold text-xl">SpaceSystem</h1>
+      )}
+
+      <div className="flex gap-10">
+        <p
+          className={`nav-text ${
+            isBack ? "nav-hover-text-isBack" : "nav-hover-text-notBack"
+          }`}
+          onClick={handleHome}
+        >
+          Home
+        </p>
+        <p
+          className={`nav-text ${
+            isBack ? "nav-hover-text-isBack" : "nav-hover-text-notBack"
+          }`}
+          onClick={handlePlanet}
+        >
+          Planets
+        </p>
+      </div>
+    </nav>
+  );
+};
+
+export default Nav;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\components\PlanetLoader.jsx ===
+import { Html } from "@react-three/drei";
+import React from "react";
+// Internal imports
+import { loaderVd } from "../utils";
+
+const PlanetLoader = ({ isLoading }) => {
+  return (
+    <>
+      {isLoading && (
+        <Html className="absolute w-96 h-60 -left-10 -top-28">
+          <div className="w-60 h-60 absolute -left-20 -top-2 flex-center">
+            <img src={loaderVd} width={50} height={50} />
+          </div>
+        </Html>
+      )}
+    </>
+  );
+};
+
+export default PlanetLoader;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\components\ScrollToTop.jsx ===
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+
+const ScrollToTop = () => {
+  const { id } = useParams();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+};
+
+export default ScrollToTop;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\constants\index.js ===
+import { earthVd, fm, im, jm, lm, mm, ndm, sm } from "../utils";
+import BlazeonView from "../PlanetsComponents/BlazeonView";
+import AuroraView from "../PlanetsComponents/AuroraView";
+import ZephyrionView from "../PlanetsComponents/ZephyrionView";
+import NebulonView from "../PlanetsComponents/NebulonView";
+import VerdantiaView from "../PlanetsComponents/VerdantiaView";
+import SpectraView from "../PlanetsComponents/SpectraView";
+import IgnisMajorView from "../PlanetsComponents/IgnisMajorView";
+
+export const earthInfo = [
+  {
+    id: 1,
+    title: "Diameters",
+    number: "12,742 km",
+  },
+  {
+    id: 2,
+    title: "Gravity",
+    number: "0.376 g",
+  },
+  {
+    id: 3,
+    title: "Surface Area",
+    number: "510.1M Sm",
+  },
+  {
+    id: 4,
+    title: "Orbit Period",
+    number: "365 days",
+  },
+  {
+    id: 5,
+    title: "Mean Radius",
+    number: "6,371 Km",
+  },
+  {
+    id: 6,
+    title: "Rotation Period",
+    number: "24 hrs",
+  },
+];
+
+export const fictionalPlanetCardLists = [
+  {
+    id: 1,
+    title: "Blazeon",
+    subtitle: "The 1st Planet",
+    km: "8,945 km",
+    g: "0.376 g",
+    map: fm,
+  },
+  {
+    id: 2,
+    title: "Aurora",
+    subtitle: "The 3rd Planet",
+    km: "3,390 km",
+    g: "0.546 g",
+    map: mm,
+  },
+  {
+    id: 3,
+    title: "Zephyrion",
+    subtitle: "The 4th Planet",
+    km: "4,540 km",
+    g: "0.386 g",
+    map: jm,
+  },
+  {
+    id: 4,
+    title: "Ignis Major",
+    subtitle: "The 5th Planet",
+    km: "6,540 km",
+    g: "0.546 g",
+    map: im,
+  },
+  {
+    id: 5,
+    title: "Verdantia",
+    subtitle: "The 2nd Planet",
+    km: "3,540 km",
+    g: "0.345 g",
+    map: lm,
+  },
+  {
+    id: 6,
+    title: "Spectra",
+    subtitle: "The 7th Planet",
+    km: "4,765 km",
+    g: "0.987 g",
+    map: sm,
+  },
+  {
+    id: 7,
+    title: "Nebulon",
+    subtitle: "The 6th Planet",
+    km: "4,540 km",
+    g: "0.386 g",
+    map: ndm,
+  },
+];
+
+export const fictionalPlanetDetailsLists = [
+  {
+    id: 1,
+    title: "Blazeon",
+    des: "Blazeon Prime orbits closest to its star within the Enigma Galaxy, boasting the highest surface temperature among all known planets. It's categorized as a scorched terrestrial planet with a diameter of 8,945 kilometers.",
+    diameter: "12,742",
+    gravity: "0.370",
+    area: "510.1M",
+    vd: earthVd,
+    model: BlazeonView,
+    color: "#4c110d",
+  },
+  {
+    id: 2,
+    title: "Aurora",
+    des: "Aurora Nexus, nestled in the heart of the Celestial Cluster, is renowned for its mesmerizing auroras that dance across its sky. This gas giant is the largest in its planetary system, with an intricate ring system encircling it.",
+    diameter: "12,742",
+    gravity: "0.376",
+    area: "510.1M",
+    vd: earthVd,
+    model: AuroraView,
+    color: "#051923",
+  },
+  {
+    id: 3,
+    title: "Zephyrion",
+    des: "Zephyrion is a serene, oceanic world located in the Tranquil Nebula, with its surface almost entirely covered by vast, undulating oceans. It's categorized as an aquatic planet with minimal landmasses, offering unique habitats for diverse marine life forms.",
+    diameter: "12,742",
+    gravity: "0.371",
+    area: "510.1M",
+    vd: earthVd,
+    model: ZephyrionView,
+    color: "#142d19",
+  },
+  {
+    id: 4,
+    title: "Ignis Major",
+    des: "Ignis Major Delta, shrouded in perpetual mist, is a gas giant known for its enigmatic floating islands suspended within its thick atmosphere. It's located in the midst of the Mysterium Nebula, captivating explorers with its mysterious allure.",
+    diameter: "49,876",
+    gravity: "0.435",
+    area: "987.1M",
+    vd: earthVd,
+    model: IgnisMajorView,
+    color: "#000000",
+  },
+  {
+    id: 5,
+    title: "Verdantia",
+    des: "Verdantia, nestled in the Lushia System, is an exquisitely lush terrestrial planet adorned with vibrant flora and fauna. Its atmosphere is rich in oxygen, making it a haven for biodiversity and exploration.",
+    diameter: "15,669",
+    gravity: "0.919",
+    area: "510.1M",
+    vd: earthVd,
+    model: VerdantiaView,
+    color: "#241508",
+  },
+  {
+    id: 6,
+    title: "Spectra",
+    des: "Spectra Prime, located in the Chromatic Expanse, is a planet renowned for its mesmerizing light displays caused by unique mineral formations that refract light in a myriad of colors across its surface. It's a popular destination for astronomers and artists alike.",
+    diameter: "24,801",
+    gravity: "1.057",
+    area: "432.1M",
+    vd: earthVd,
+    model: SpectraView,
+    color: "#481213",
+  },
+  {
+    id: 7,
+    title: "Nebulon",
+    des: "Nebulon, situated closest to its star in the Ember System, is a fiery inferno of molten lava and volcanic activity. Its extreme conditions make it uninhabitable, yet it remains a subject of fascination for scientists studying planetary formation and geology.",
+    diameter: "10,583",
+    gravity: "0.371",
+    area: "235.1M",
+    vd: earthVd,
+    model: NebulonView,
+    color: "#081c15",
+  },
+];
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\PlanetsComponents\AuroraView.jsx ===
+import React, { useEffect, useMemo, useState, useRef } from "react";
+import * as THREE from "three";
+// Internal imports
+import { mm, mn, md, ma } from "../utils";
+import CommonViewer from "../components/CommonViewer";
+import PlanetLoader from "../components/PlanetLoader";
+
+const AuroraView = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const sphere = useRef(new THREE.Mesh());
+
+  const scalingFactor = Math.min(Math.max(window.innerWidth / 1200, 0.5), 1.01);
+
+  useEffect(() => {
+    sphere.current.visible = false;
+  }, [mm, mn, md, ma]);
+
+  const manager = new THREE.LoadingManager();
+  manager.onLoad = function () {
+    setIsLoading(false);
+    sphere.current.visible = true;
+  };
+
+  const texture = new THREE.TextureLoader(manager).load(mm);
+  const normal = new THREE.TextureLoader(manager).load(mn);
+  const displacement = new THREE.TextureLoader(manager).load(md);
+  const aomap = new THREE.TextureLoader(manager).load(ma);
+
+  useMemo(() => {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.setScalar(4);
+  }, [texture]);
+
+  useMemo(() => {
+    normal.wrapS = normal.wrapT = THREE.RepeatWrapping;
+    normal.repeat.setScalar(4);
+  }, [normal]);
+
+  useMemo(() => {
+    displacement.wrapS = displacement.wrapT = THREE.RepeatWrapping;
+    displacement.repeat.setScalar(4);
+  }, [displacement]);
+
+  useMemo(() => {
+    aomap.wrapS = aomap.wrapT = THREE.RepeatWrapping;
+    aomap.repeat.setScalar(4);
+  }, [aomap]);
+
+  return (
+    <>
+      <CommonViewer sparkle={"#4cc9f0"} rectAreaLight={"#caf0f8"} />
+
+      <pointLight position={[3, -1, 3]} intensity={5} color={"#00b4d8"} />
+
+      <PlanetLoader isLoading={isLoading} />
+
+      <mesh
+        scale={scalingFactor * 4}
+        position={[0, scalingFactor * 1.5, 0]}
+        ref={sphere}
+      >
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshStandardMaterial
+          map={texture}
+          normalMap={normal}
+          normalScale={3}
+          displacementMap={displacement}
+          displacementScale={0.05}
+          aoMap={aomap}
+          aoMapIntensity={1.5}
+          roughness={0}
+        />
+      </mesh>
+    </>
+  );
+};
+
+export default AuroraView;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\PlanetsComponents\BlazeonView.jsx ===
+import * as THREE from "three";
+import React, { useMemo, useState, useRef, useEffect } from "react";
+
+// Internal imports
+import { fa, fd, fm, fn } from "../utils";
+import CommonViewer from "../components/CommonViewer";
+import PlanetLoader from "../components/PlanetLoader";
+
+const BlazeonView = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const sphere = useRef(new THREE.Mesh());
+
+  const scalingFactor = Math.min(Math.max(window.innerWidth / 1200, 0.5), 1.01);
+
+  useEffect(() => {
+    sphere.current.visible = false;
+  }, [fa, fd, fm, fn]);
+
+  const manager = new THREE.LoadingManager();
+  manager.onLoad = function () {
+    setIsLoading(false);
+    sphere.current.visible = true;
+  };
+
+  const texture = new THREE.TextureLoader(manager).load(fm);
+  const normal = new THREE.TextureLoader(manager).load(fn);
+  const displacement = new THREE.TextureLoader(manager).load(fa);
+  const aomap = new THREE.TextureLoader(manager).load(fd);
+
+  useMemo(() => {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.setScalar(4);
+  }, [texture]);
+
+  useMemo(() => {
+    normal.wrapS = normal.wrapT = THREE.RepeatWrapping;
+    normal.repeat.setScalar(4);
+  }, [normal]);
+
+  useMemo(() => {
+    displacement.wrapS = displacement.wrapT = THREE.RepeatWrapping;
+    displacement.repeat.setScalar(4);
+  }, [displacement]);
+
+  useMemo(() => {
+    aomap.wrapS = aomap.wrapT = THREE.RepeatWrapping;
+    aomap.repeat.setScalar(4);
+  }, [aomap]);
+
+  return (
+    <>
+      <CommonViewer sparkle={"#fff0f3"} rectAreaLight={"#fb6107"} />
+
+      <pointLight position={[3, 0, 3]} intensity={5} color={"#fff0f3"} />
+      <pointLight position={[-3, -3, 3]} intensity={5} color={"#fff0f3"} />
+
+      <PlanetLoader isLoading={isLoading} />
+
+      <mesh
+        scale={scalingFactor * 4}
+        position={[0, scalingFactor * 1.5, 0]}
+        ref={sphere}
+      >
+        <sphereGeometry args={[1, 32, 32]} />
+        {/* you can play around here */}
+        <meshStandardMaterial
+          map={texture}
+          normalMap={normal}
+          normalScale={0.1}
+          displacementMap={displacement}
+          displacementScale={0.01}
+          aoMap={aomap}
+          aoMapIntensity={0.5}
+          roughness={0}
+        />
+      </mesh>
+    </>
+  );
+};
+
+export default BlazeonView;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\PlanetsComponents\EarthView.jsx ===
+import {
+  OrbitControls,
+  PerspectiveCamera,
+  Sparkles,
+  View,
+} from "@react-three/drei";
+import React, { useState, useMemo, useEffect, useRef } from "react";
+import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
+
+// Internal imports
+import { eb, ec, em, en, es } from "../utils";
+import PLanetLoader from "../components/PlanetLoader";
+let mobile = window.innerWidth < 768; // let know the mobile device
+
+const EarthView = ({ view }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const earthMesh = useRef(new THREE.Mesh()); // the earth sphere
+  const cloudMesh = useRef(new THREE.Mesh()); // the cloud sphere
+
+  const scalingFactor = Math.min(Math.max(window.innerWidth / 1200, 0.5), 1.01); // auto scale accordingly to the screen size
+
+  useEffect(() => {
+    earthMesh.current.visible = false; // hide the earth sphere
+  }, [es, eb, ec, em, en]);
+
+  // https://threejs.org/docs/#api/en/loaders/managers/LoadingManager
+  // we will use the loading manager to know when the textures are loaded
+  const manager = new THREE.LoadingManager();
+  manager.onLoad = function () {
+    setIsLoading(false);
+    earthMesh.current.visible = true;
+  };
+
+  // load the textures
+  // https://threejs.org/docs/?q=texture#api/en/loaders/TextureLoader
+  // we will use the texture loader to load the textures, and we will use the manager to know when the textures are loaded
+  // this has more control than the useTexture hook from drei
+  const texture = new THREE.TextureLoader(manager).load(em);
+  const normal = new THREE.TextureLoader(manager).load(en);
+  const bump = new THREE.TextureLoader(manager).load(eb);
+  const cloud = new THREE.TextureLoader(manager).load(ec);
+  const spec = new THREE.TextureLoader(manager).load(es);
+
+  // wrap the textures with useMemo to avoid re-rendering
+  useMemo(() => {
+    bump.wrapS = bump.wrapT = THREE.RepeatWrapping;
+    bump.repeat.setScalar(4);
+  }, [bump]);
+
+  useMemo(() => {
+    normal.wrapS = normal.wrapT = THREE.RepeatWrapping;
+    normal.repeat.setScalar(4);
+  }, [normal]);
+
+  return (
+    <>
+      {/* for the whole canvas sparkles */}
+      <View
+        className={`w-screen h-[300vh] lg:h-[380vh] absolute -translate-x-[50%] left-[50%]`}
+      >
+        <Sparkles
+          count={200}
+          scale={[5, 15, 10]}
+          size={1.5}
+          speed={1}
+          color={"#caf0f8"}
+        />
+      </View>
+      <View
+        className={`w-screen h-screen lg:w-[50vw] lg:h-[90vh] absolute -translate-x-[50%] left-[50%] top-96 z-[100] ${view}`}
+      >
+        <ambientLight intensity={3} />
+
+        {/* rectAreaLight is used to give the earth some light from the left side */}
+        <rectAreaLight
+          scale={[5, 5, 5]}
+          color={"#007f5f"}
+          position={[-5, 3, 3]}
+          intensity={2}
+        />
+
+        <rectAreaLight
+          scale={[5, 5, 5]}
+          color={"#f8f9fa"}
+          position={[-4, -4, 3]}
+          intensity={2}
+        />
+
+        <Sparkles
+          count={100}
+          scale={[5, 5, 10]}
+          size={1.5}
+          speed={1}
+          color={"#caf0f8"}
+        />
+        <OrbitControls
+          enableRotate={mobile ? false : true} // to prevent the user from rotating the earth on mobile for the scrolling
+          enableZoom={false}
+          rotateSpeed={0.2}
+          autoRotate
+          autoRotateSpeed={0.2}
+          maxPolarAngle={Math.PI / 2} // to prevent the user from rotating the earth upside down
+          minPolarAngle={Math.PI / 2}
+          enablePan={false}
+          makeDefault
+        />
+        <PerspectiveCamera position={[0, 0, 0.0001]} />
+        {/* show the loader when the textures are loading */}
+        <PLanetLoader isLoading={isLoading} />
+        <mesh
+          scale={scalingFactor * 2.5}
+          position={[0, scalingFactor * -0.5, 0]}
+          ref={earthMesh}
+          rotation={[0, -1, 0]}
+        >
+          <sphereGeometry args={[1, 32, 32]} />
+          <meshStandardMaterial
+            map={texture} // the texture is used to give the earth its color
+            metalness={0}
+            roughness={1}
+            bumpMap={bump} // the bump map is used to give the earth some texture
+            bumpScale={1.3}
+            normalMap={normal} // the normal map is used to give the earth some depth
+            normalScale={[3, 3]}
+          />
+        </mesh>
+
+        <Cloud
+          cloudMesh={cloudMesh}
+          map={cloud}
+          scalingFactor={scalingFactor}
+          mobile={mobile}
+        />
+      </View>
+    </>
+  );
+};
+
+export default EarthView;
+
+export const Cloud = ({ cloudMesh, map, scalingFactor }) => {
+  useFrame(() => {
+    cloudMesh.current.rotation.y += -0.0002; // I want the clouds move to different direction but if you want to move it to the same direction as the earth, you can change the sign to positive
+  });
+
+  return (
+    <>
+      <mesh
+        scale={scalingFactor * 2.52}
+        position={[0, scalingFactor * -0.5, 0]}
+        ref={cloudMesh}
+      >
+        <sphereGeometry args={[1, 32, 32]} />
+        {/* https://threejs.org/docs/?q=mesh#api/en/materials/MeshPhongMaterial */}
+        <meshPhongMaterial map={map} transparent={true} />
+      </mesh>
+    </>
+  );
+};
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\PlanetsComponents\IgnisMajorView.jsx ===
+import React, { useMemo, useState, useEffect, useRef } from "react";
+import * as THREE from "three";
+
+// Internal imports
+import CommonViewer from "../components/CommonViewer";
+import { im, inn, idd, ia, ir } from "../utils";
+import PlanetLoader from "../components/PlanetLoader";
+
+const IgnisMajorView = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const sphere = useRef(new THREE.Mesh());
+
+  useEffect(() => {
+    sphere.current.visible = false;
+  }, [im, inn, idd, ia, ir]);
+
+  const scalingFactor = Math.min(Math.max(window.innerWidth / 1200, 0.5), 1.01);
+
+  const manager = new THREE.LoadingManager();
+  manager.onLoad = function () {
+    setIsLoading(false);
+    sphere.current.visible = true;
+  };
+
+  const texture = new THREE.TextureLoader(manager).load(im);
+  const normal = new THREE.TextureLoader(manager).load(inn);
+  const displacement = new THREE.TextureLoader(manager).load(idd);
+  const aomap = new THREE.TextureLoader(manager).load(ia);
+  const roughness = new THREE.TextureLoader(manager).load(ir);
+
+  useMemo(() => {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.setScalar(4);
+  }, [texture]);
+
+  useMemo(() => {
+    normal.wrapS = normal.wrapT = THREE.RepeatWrapping;
+    normal.repeat.setScalar(4);
+  }, [normal]);
+
+  useMemo(() => {
+    displacement.wrapS = displacement.wrapT = THREE.RepeatWrapping;
+    displacement.repeat.setScalar(4);
+  }, [displacement]);
+
+  useMemo(() => {
+    aomap.wrapS = aomap.wrapT = THREE.RepeatWrapping;
+    aomap.repeat.setScalar(4);
+  }, [aomap]);
+
+  useMemo(() => {
+    roughness.wrapS = roughness.wrapT = THREE.RepeatWrapping;
+    roughness.repeat.setScalar(4);
+  }, [roughness]);
+
+  return (
+    <>
+      <CommonViewer sparkle={"#ffffff"} rectAreaLight={"#edf2f4"} />
+      <pointLight position={[3, 0, 3]} intensity={5} color={"#d8f3dc"} />
+      <pointLight position={[-3, -3, 3]} intensity={5} color={"#d8f3dc"} />
+
+      <PlanetLoader isLoading={isLoading} />
+
+      <mesh
+        scale={scalingFactor * 4}
+        position={[0, scalingFactor * 1.5, 0]}
+        ref={sphere}
+      >
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshStandardMaterial
+          map={texture}
+          normalMap={normal}
+          normalScale={0.5}
+          aoMap={aomap}
+          aoMapIntensity={0.5}
+          displacementMap={displacement}
+          displacementScale={0.05}
+          roughnessMap={roughness}
+          roughness={0.5}
+        />
+      </mesh>
+    </>
+  );
+};
+
+export default IgnisMajorView;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\PlanetsComponents\NebulonView.jsx ===
+import React, { useMemo, useState, useEffect, useRef } from "react";
+import * as THREE from "three";
+
+// Internal imports
+import CommonViewer from "../components/CommonViewer";
+import { ndm, ndn, ndd, nda, ndr } from "../utils";
+import PlanetLoader from "../components/PlanetLoader";
+
+const NebulonView = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const sphere = useRef(new THREE.Mesh());
+
+  const scalingFactor = Math.min(Math.max(window.innerWidth / 1200, 0.5), 1.01);
+
+  useEffect(() => {
+    sphere.current.visible = false;
+  }, [nda, ndd, ndm, ndn, ndr]);
+
+  const manager = new THREE.LoadingManager();
+  manager.onLoad = function () {
+    setIsLoading(false);
+    sphere.current.visible = true;
+  };
+
+  const texture = new THREE.TextureLoader(manager).load(ndm);
+  const normal = new THREE.TextureLoader(manager).load(ndn);
+  const displacement = new THREE.TextureLoader(manager).load(ndd);
+  const aomap = new THREE.TextureLoader(manager).load(nda);
+  const roughness = new THREE.TextureLoader(manager).load(ndr);
+
+  useMemo(() => {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.setScalar(4);
+  }, [texture]);
+
+  useMemo(() => {
+    normal.wrapS = normal.wrapT = THREE.RepeatWrapping;
+    normal.repeat.setScalar(4);
+  }, [normal]);
+
+  useMemo(() => {
+    displacement.wrapS = displacement.wrapT = THREE.RepeatWrapping;
+    displacement.repeat.setScalar(4);
+  }, [displacement]);
+
+  useMemo(() => {
+    aomap.wrapS = aomap.wrapT = THREE.RepeatWrapping;
+    aomap.repeat.setScalar(4);
+  }, [aomap]);
+
+  useMemo(() => {
+    roughness.wrapS = roughness.wrapT = THREE.RepeatWrapping;
+    roughness.repeat.setScalar(4);
+  }, [roughness]);
+
+  return (
+    <>
+      <CommonViewer sparkle={"#52b788"} rectAreaLight={"#52b69a"} />
+      <pointLight position={[3, 0, 3]} intensity={5} color={"#d8f3dc"} />
+      <pointLight position={[-3, -3, 3]} intensity={5} color={"#d8f3dc"} />
+
+      <PlanetLoader isLoading={isLoading} />
+
+      <mesh
+        scale={scalingFactor * 4}
+        position={[0, scalingFactor * 1.5, 0]}
+        ref={sphere}
+      >
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshStandardMaterial
+          map={texture}
+          normalMap={normal}
+          normalScale={1}
+          // displacementMap={nddTexture}
+          // displacementScale={0.05}
+          aoMap={displacement}
+          aoMapIntensity={0.9}
+          roughnessMap={roughness}
+          roughness={0}
+        />
+      </mesh>
+    </>
+  );
+};
+
+export default NebulonView;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\PlanetsComponents\SmallPlanetsViewer.jsx ===
+import { OrbitControls } from "@react-three/drei";
+import React, { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
+// Internal imports
+import PlanetLoader from "../components/PlanetLoader";
+
+const SmallPlanetsViewer = ({ tex }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const sphere = useRef(new THREE.Mesh());
+
+  useEffect(() => {
+    sphere.current.visible = false;
+  }, [tex]);
+
+  const manager = new THREE.LoadingManager();
+  manager.onLoad = function () {
+    setIsLoading(false);
+    sphere.current.visible = true;
+  };
+
+  const texture = new THREE.TextureLoader(manager).load(tex);
+
+  return (
+    <>
+      <OrbitControls
+        enableZoom={false}
+        rotateSpeed={0.2}
+        autoRotate
+        autoRotateSpeed={0.2}
+        maxPolarAngle={Math.PI / 2}
+        minPolarAngle={Math.PI / 2}
+        enablePan={false}
+      />
+      <ambientLight intensity={2} />
+
+      <rectAreaLight
+        rotation={[Math.PI / 2, 0, 0]}
+        position={[0, -3, -1]}
+        intensity={5}
+        color={"#f8f9fa"}
+      />
+
+      <PlanetLoader isLoading={isLoading} />
+
+      <mesh scale={[2.25, 2.25, 2.25]} ref={sphere}>
+        <sphereGeometry args={[1, 16, 16]} />
+        <meshStandardMaterial map={texture} />
+      </mesh>
+    </>
+  );
+};
+
+export default SmallPlanetsViewer;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\PlanetsComponents\SpectraView.jsx ===
+import React, { useMemo, useEffect, useState, useRef } from "react";
+import CommonViewer from "../components/CommonViewer";
+
+// Internal imports
+import { sa, sd, sm, sn, sr } from "../utils";
+import * as THREE from "three";
+import PlanetLoader from "../components/PlanetLoader";
+
+const SpectraView = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const sphere = useRef(new THREE.Mesh());
+
+  const scalingFactor = Math.min(Math.max(window.innerWidth / 1200, 0.5), 1.01);
+
+  useEffect(() => {
+    sphere.current.visible = false;
+  }, [sa, sd, sm, sn, sr]);
+
+  const manager = new THREE.LoadingManager();
+  manager.onLoad = function () {
+    setIsLoading(false);
+    sphere.current.visible = true;
+  };
+
+  const texture = new THREE.TextureLoader(manager).load(sm);
+  const normal = new THREE.TextureLoader(manager).load(sn);
+  const displacement = new THREE.TextureLoader(manager).load(sd);
+  const aomap = new THREE.TextureLoader(manager).load(sa);
+  const roughness = new THREE.TextureLoader(manager).load(sr);
+
+  useMemo(() => {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.setScalar(4);
+  }, [texture]);
+
+  useMemo(() => {
+    normal.wrapS = normal.wrapT = THREE.RepeatWrapping;
+    normal.repeat.setScalar(4);
+  }, [normal]);
+
+  useMemo(() => {
+    displacement.wrapS = displacement.wrapT = THREE.RepeatWrapping;
+    displacement.repeat.setScalar(4);
+  }, [displacement]);
+
+  useMemo(() => {
+    aomap.wrapS = aomap.wrapT = THREE.RepeatWrapping;
+    aomap.repeat.setScalar(4);
+  }, [aomap]);
+
+  useMemo(() => {
+    roughness.wrapS = roughness.wrapT = THREE.RepeatWrapping;
+    roughness.repeat.setScalar(4);
+  }, [roughness]);
+
+  return (
+    <>
+      <CommonViewer sparkle={"#ff7b00"} rectAreaLight={"#ffffff"} />
+      <pointLight position={[3, 0, 3]} intensity={5} color={"#ff0a54"} />
+      <pointLight position={[-3, -3, 3]} intensity={5} color={"#e01e37"} />
+
+      <PlanetLoader isLoading={isLoading} />
+
+      <mesh
+        scale={scalingFactor * 4}
+        position={[0, scalingFactor * 1.5, 0]}
+        ref={sphere}
+      >
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshStandardMaterial
+          map={texture}
+          normalMap={normal}
+          normalScale={[1, 1]}
+          // displacementMap={ldTexture}
+          // displacementScale={0.05}
+          aoMap={aomap}
+          aoMapIntensity={0.9}
+          roughnessMap={roughness}
+          roughness={0}
+        />
+      </mesh>
+    </>
+  );
+};
+
+export default SpectraView;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\PlanetsComponents\VerdantiaView.jsx ===
+import React, { useMemo, useState, useRef, useEffect } from "react";
+import * as THREE from "three";
+
+// Internal imports
+import { la, ld, lm, ln } from "../utils";
+import CommonViewer from "../components/CommonViewer";
+import PlanetLoader from "../components/PlanetLoader";
+
+const VerdantiaView = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const sphere = useRef(new THREE.Mesh());
+
+  useEffect(() => {
+    sphere.current.visible = false;
+  }, [la, ld, lm, ln]);
+
+  const scalingFactor = Math.min(Math.max(window.innerWidth / 1200, 0.5), 1.01);
+
+  const manager = new THREE.LoadingManager();
+  manager.onLoad = function () {
+    setIsLoading(false);
+    sphere.current.visible = true;
+  };
+
+  const texture = new THREE.TextureLoader(manager).load(lm);
+  const normal = new THREE.TextureLoader(manager).load(ln);
+  const displacement = new THREE.TextureLoader(manager).load(ld);
+  const aomap = new THREE.TextureLoader(manager).load(la);
+
+  useMemo(() => {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.setScalar(4);
+  }, [texture]);
+
+  useMemo(() => {
+    normal.wrapS = normal.wrapT = THREE.RepeatWrapping;
+    normal.repeat.setScalar(4);
+  }, [normal]);
+
+  useMemo(() => {
+    displacement.wrapS = displacement.wrapT = THREE.RepeatWrapping;
+    displacement.repeat.setScalar(4);
+  }, [displacement]);
+
+  useMemo(() => {
+    aomap.wrapS = aomap.wrapT = THREE.RepeatWrapping;
+    aomap.repeat.setScalar(4);
+  }, [aomap]);
+
+  return (
+    <>
+      <CommonViewer sparkle={"#ffd60a"} rectAreaLight={"#ffd60a"} />
+      <pointLight position={[3, 0, 3]} intensity={5} color={"#fdc500"} />
+      <pointLight position={[-3, -3, 3]} intensity={5} color={"#ff7b00"} />
+
+      <PlanetLoader isLoading={isLoading} />
+
+      <mesh
+        scale={scalingFactor * 4}
+        position={[0, scalingFactor * 1.5, 0]}
+        ref={sphere}
+      >
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshStandardMaterial
+          map={texture}
+          normalMap={normal}
+          normalScale={[1, 1]}
+          // displacementMap={ldTexture}
+          // displacementScale={0.05}
+          aoMap={aomap}
+          aoMapIntensity={0.9}
+          roughness={1}
+        />
+      </mesh>
+    </>
+  );
+};
+
+export default VerdantiaView;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\PlanetsComponents\ZephyrionView.jsx ===
+import React, { useMemo, useState, useEffect, useRef } from "react";
+import * as THREE from "three";
+
+// Internal imports
+import { ja, jd, jm, jn } from "../utils";
+import CommonViewer from "../components/CommonViewer";
+import PlanetLoader from "../components/PlanetLoader";
+
+const ZephyrionView = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const sphere = useRef(new THREE.Mesh());
+
+  const scalingFactor = Math.min(Math.max(window.innerWidth / 1200, 0.5), 1.01);
+
+  useEffect(() => {
+    sphere.current.visible = false;
+  }, [ja, jd, jm, jn]);
+
+  const manager = new THREE.LoadingManager();
+  manager.onLoad = function () {
+    setIsLoading(false);
+    sphere.current.visible = true;
+  };
+
+  const texture = new THREE.TextureLoader(manager).load(jm);
+  const normal = new THREE.TextureLoader(manager).load(jn);
+  const displacement = new THREE.TextureLoader(manager).load(jd);
+  const aomap = new THREE.TextureLoader(manager).load(ja);
+
+  useMemo(() => {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.setScalar(4);
+  }, [texture]);
+
+  useMemo(() => {
+    normal.wrapS = normal.wrapT = THREE.RepeatWrapping;
+    normal.repeat.setScalar(4);
+  }, [normal]);
+
+  useMemo(() => {
+    displacement.wrapS = displacement.wrapT = THREE.RepeatWrapping;
+    displacement.repeat.setScalar(4);
+  }, [displacement]);
+
+  useMemo(() => {
+    aomap.wrapS = aomap.wrapT = THREE.RepeatWrapping;
+    aomap.repeat.setScalar(4);
+  }, [aomap]);
+
+  return (
+    <>
+      <CommonViewer sparkle={"#52b788"} rectAreaLight={"#52b69a"} />
+
+      <pointLight position={[3, 0, 3]} intensity={5} color={"#d8f3dc"} />
+      <pointLight position={[-3, -3, 3]} intensity={5} color={"#d8f3dc"} />
+
+      <PlanetLoader isLoading={isLoading} />
+
+      <mesh
+        scale={scalingFactor * 4}
+        position={[0, scalingFactor * 1.5, 0]}
+        ref={sphere}
+      >
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshStandardMaterial
+          map={texture}
+          normalMap={normal}
+          normalScale={1}
+          displacementMap={displacement}
+          displacementScale={0.05}
+          aoMap={aomap}
+          aoMapIntensity={0.5}
+          roughness={1}
+        />
+      </mesh>
+    </>
+  );
+};
+
+export default ZephyrionView;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\routes\PlanetDetail.jsx ===
+import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Canvas } from "@react-three/fiber";
+
+// Interal imports
+import Nav from "../components/Nav";
+import { fictionalPlanetDetailsLists } from "../constants";
+import Button from "../components/Button";
+import ScrollToTop from "../components/ScrollToTop";
+
+let mobile = window.innerWidth < 768;
+
+const PlanetDetail = () => {
+  const { id } = useParams();
+
+  const back = useNavigate();
+  const handleBack = () => {
+    back("/planets");
+  };
+
+  const {
+    title,
+    des,
+    diameter,
+    gravity,
+    area,
+    vd,
+    model: Model,
+    color,
+  } = fictionalPlanetDetailsLists.find((planet) => planet.id === Number(id));
+
+  return (
+    <div
+      className="w-screen h-full px-10 md:px-20"
+      style={{
+        backgroundColor: `${color}`,
+      }}
+    >
+      <ScrollToTop />
+      {/* nav bar */}
+      <Nav border={false} isBack={true} />
+
+      {/* canvas for the planets */}
+      <Canvas
+        style={{
+          width: mobile ? "80vw" : "100vw",
+          height: mobile ? "50vh" : "60vh",
+          position: "relative",
+          top: mobile ? "10vh" : 0,
+          left: "50%",
+          transform: "translate(-50%, -15%)",
+        }}
+      >
+        <Model />
+      </Canvas>
+
+      {/* Earth Text */}
+      <div className="flex flex-col items-center -translate-y-14">
+        <h1 className="font-orbiton text-4xl md:text-8xl font-bold">{title}</h1>
+        <div className="underline-div"></div>
+
+        <p className="detail-sub-text mt-10">{des}</p>
+
+        <Button text="SCROLL DOWN" />
+
+        <div className="flex flex-col md:flex-row gap-16 my-20">
+          <div className="info-text">
+            <p className="info-sub-text">Diameters</p>
+            <p className="info-number">{diameter} km</p>
+          </div>
+          <div className="info-text">
+            <p className="info-sub-text">Gravity</p>
+            <p className="info-number">{gravity} g</p>
+          </div>
+          <div className="info-text">
+            <p className="info-sub-text">Surface Area</p>
+            <p className="info-number">{area}M SM</p>
+          </div>
+        </div>
+
+        <p className="detail-sub-text mb-8 ">
+          Orbiting the Sun every 365.25 days, Earth boasts a varied topography,
+          from towering mountain peaks to the depths of its oceans. Enveloped in
+          an atmosphere primarily composed of nitrogen and oxygen, it nurtures
+          life in every corner
+        </p>
+        <p className="detail-sub-text mb-8 ">
+          Home to iconic landmarks like Mount Everest and the Pacific Ocean,
+          Earth is a testament to the wonders of the universe, offering a haven
+          for exploration and discovery.
+        </p>
+        <p className="detail-sub-text mb-16 ">
+          Earth, our home planet, has a diameter of about 12,742 kilometers. It
+          completes one orbit around the Sun in approximately 365.25 days and
+          rotates about its axis every 24 hours. With a diverse surface, Earth
+          is home to over 7.9 billion people and various ecosystems.
+        </p>
+
+        <video
+          src={vd}
+          autoPlay
+          muted
+          loop
+          className="rounded-3xl w-[50vw] h-full"
+        ></video>
+
+        <p className="detail-sub-text mt-16 mb-8 ">
+          The atmosphere, mainly composed of nitrogen and oxygen, sustains life,
+          while iconic features like Mount Everest and the Pacific Ocean add to
+          its natural beauty.
+        </p>
+
+        <p className="detail-sub-text mb-8 ">
+          Geographically, Earth showcases awe-inspiring features, including the
+          vast Pacific Ocean, the towering heights of Mount Everest at 8,848
+          meters above sea level, and the profound depths of Challenger Deep in
+          the Mariana Trench, reaching about 10,994 meters below sea.
+        </p>
+
+        <Button text="READ MORE" />
+
+        <div className="w-full h-full mt-24">
+          <Nav border={false} isBack={false} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PlanetDetail;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\routes\PlanetLists.jsx ===
+import React from "react";
+import Nav from "../components/Nav";
+import CardsContainer from "../components/CardsContainer";
+
+const PlanetLists = () => {
+  return (
+    <div className="bg-planet-card-bg bg-cover bg-no-repeat px-10 md:px-20 pb-20 overflow-hidden">
+      <Nav border={true} isBack={false} />
+
+      <CardsContainer restrict={false} />
+    </div>
+  );
+};
+
+export default PlanetLists;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\sections\EarthDetail.jsx ===
+import React from "react";
+
+const EarthDetail = () => {
+  return (
+    <div className="w-screen h-screen lg:h-[30vh] lg:w-[35vw]">
+      <p className="font-orbiton tracking-wide text-lg">PLANET</p>
+      <h1 className="earth-title">Earth</h1>
+      <div className="underline-div"></div>
+      <p className="sub-text text-lg mb-5 mt-10 tracking-wide ">
+        Earth, our home planet, has a diameter of about 12,742 KM. It completes
+        one orbit around the Sun in approximately 365.25 days and rotates about
+        its axis every 24 hours.
+      </p>
+      <p className="sub-text text-lg mb-5 tracking-wide">
+        The atmosphere, mainly composed of nitrogen and oxygen, sustains life,
+        while iconic features like Mount Everest and the Pacific Ocean add to
+        its natural beauty.
+      </p>
+    </div>
+  );
+};
+
+export default EarthDetail;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\sections\HeroOverLay.jsx ===
+import React from "react";
+import Button from "../components/Button";
+
+const HeroOverLay = () => {
+  return (
+    <div className="h-screen relative flex flex-col items-center">
+      <p className="font-orbiton text-center tracking-[1rem] text-lg mt-32 md:mt-24 mb-8">
+        PLANET
+      </p>
+      <h1 className="earth-title">Earth</h1>
+      <div className="underline-div-div"></div>
+      <p className="sub-text text-lg mt-10 tracking-wide text-center">
+        Earth: A vibrant planet rich in life and natural beauty. Our home.
+      </p>
+      <Button text="LEARN MORE" />
+    </div>
+  );
+};
+
+export default HeroOverLay;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\sections\Home.jsx ===
+import React from "react";
+import RealHero from "./RealHero";
+
+const Home = () => {
+  return (
+    <div className="w-screen h-full overflow-hidden bg-planet-card-bg bg-cover">
+      <RealHero />
+    </div>
+  );
+};
+
+export default Home;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\sections\RealHero.jsx ===
+import { Canvas } from "@react-three/fiber";
+import React, { useEffect } from "react";
+import { View } from "@react-three/drei";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
+
+// Import internals
+import Nav from "../components/Nav";
+import HeroOverLay from "./HeroOverLay";
+import EarthDetail from "./EarthDetail";
+import EarthView from "../PlanetsComponents/EarthView";
+import CardsContainer from "../components/CardsContainer";
+import EarthInfo from "../components/EarthInfo";
+
+let mobile = window.innerWidth < 768;
+
+const RealHero = () => {
+  useEffect(() => {
+    gsap.to(".view", {
+      scrollTrigger: {
+        trigger: ".detail",
+        scrub: 0.2,
+        start: "-50% center",
+        end: "bottom bottom",
+        // markers: true,
+      },
+      top: mobile ? "130%" : "110%",
+      left: mobile ? "0%" : "45%",
+      transform: "translateX(0%)  ",
+      duration: 5,
+      ease: "power1.out",
+      immediateRender: false,
+    });
+    gsap.to(
+      ".view",
+      {
+        scrollTrigger: {
+          trigger: ".info",
+          scrub: 0.2,
+          start: "-50% center",
+          end: "bottom 110%",
+          // markers: true,
+        },
+        top: mobile ? "225%" : "205%",
+        left: mobile ? "0%" : "5%",
+        transform: "translateX(0%)",
+        duration: 10,
+        ease: "power1.in",
+        immediateRender: false,
+      },
+      "<"
+    );
+  }, []);
+
+  return (
+    <div className="w-screen px-10 lg:px-20 ">
+      <Nav border={true} isBack={false} />
+      <Canvas
+        className="w-screen h-screen z-50 "
+        style={{
+          position: "fixed",
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          overflow: "hidden",
+        }}
+        eventSource={document.getElementById("root")}
+      >
+        <View.Port />
+      </Canvas>
+      <EarthView view={"view"} />
+
+      <HeroOverLay />
+      <div className="h-screen relative flex justify-start items-center detail">
+        <EarthDetail />
+      </div>
+      <div className="md:h-screen h-full relative flex justify-end items-center info">
+        <EarthInfo />
+      </div>
+      <div className="md:my-32">
+        <h1 className="text-lg font-extrabold md:text-5xl text-center font-orbiton tracking-wider">
+          EXPLORE OTHER PLANETS
+        </h1>
+        <CardsContainer restrict={true} />
+      </div>
+      <div>
+        <Nav border={false} isBack={false} />
+      </div>
+    </div>
+  );
+};
+
+export default RealHero;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\utils\index.js ===
+import planetCard from "../assets/imgs/planet-card-bg.png";
+import rectangle from "../assets/imgs/rectangle.svg";
+import arrow from "../assets/imgs/arrow.png";
+import back from "../assets/imgs/back.svg";
+
+// planet textures
+import mImg from "../assets/imgs/textures/earth/m.jpg";
+import mnImg from "../assets/imgs/textures/earth/mn.jpg";
+import mdImg from "../assets/imgs/textures/earth/md.png";
+import maImg from "../assets/imgs/textures/earth/ma.jpg";
+
+import fImg from "../assets/imgs/textures/earth/f.jpg";
+import fnImg from "../assets/imgs/textures/earth/fn.jpg";
+import fdImg from "../assets/imgs/textures/earth/fd.png";
+import faImg from "../assets/imgs/textures/earth/fa.jpg";
+
+import jImg from "../assets/imgs/textures/earth/j.jpg";
+import jnImg from "../assets/imgs/textures/earth/jn.jpg";
+import jdImg from "../assets/imgs/textures/earth/jd.png";
+import jaImg from "../assets/imgs/textures/earth/ja.jpg";
+
+import ndImg from "../assets/imgs/textures/Nebulon Delta/nd.jpg";
+import ndnImg from "../assets/imgs/textures/Nebulon Delta/ndn.jpg";
+import nddImg from "../assets/imgs/textures/Nebulon Delta/ndd.png";
+import ndaImg from "../assets/imgs/textures/Nebulon Delta/nda.jpg";
+import ndrImg from "../assets/imgs/textures/Nebulon Delta/ndr.jpg";
+
+import lImg from "../assets/imgs/textures/Verdantia/lm.jpg";
+import lnImg from "../assets/imgs/textures/Verdantia/ln.jpg";
+import ldImg from "../assets/imgs/textures/Verdantia/ld.png";
+import laImg from "../assets/imgs/textures/Verdantia/la.jpg";
+
+import sImg from "../assets/imgs/textures/Spectra/sm.jpg";
+import snImg from "../assets/imgs/textures/Spectra/sn.jpg";
+import sdImg from "../assets/imgs/textures/Spectra/sd.png";
+import saImg from "../assets/imgs/textures/Spectra/sa.jpg";
+import srImg from "../assets/imgs/textures/Spectra/sr.jpg";
+
+import iImg from "../assets/imgs/textures/IgnisMajor/im.jpg";
+import inImg from "../assets/imgs/textures/IgnisMajor/in.jpg";
+import idImg from "../assets/imgs/textures/IgnisMajor/id.png";
+import iaImg from "../assets/imgs/textures/IgnisMajor/ia.jpg";
+import irImg from "../assets/imgs/textures/IgnisMajor/ir.jpg";
+
+import emImg from "../assets/imgs/textures/HeroEarth/em.jpg";
+import ebImg from "../assets/imgs/textures/HeroEarth/eb.jpg";
+import esImg from "../assets/imgs/textures/HeroEarth/es.jpg";
+import ecImg from "../assets/imgs/textures/HeroEarth/ec.png";
+import enImg from "../assets/imgs/textures/HeroEarth/en.jpg";
+
+import sunImg from "../assets/imgs/textures/sun/sun.jpeg";
+
+import marImg from "../assets/imgs/textures/Mars/mar.webp";
+import marnImg from "../assets/imgs/textures/Mars/marn.jpg";
+import marbImg from "../assets/imgs/textures/Mars/marb.jpg";
+
+import loaderGif from "../assets/vds/loadingPlanet.gif";
+
+// videos
+import earthMp4 from "../assets/vds/earth.mp4";
+
+export const planetCardBg = planetCard;
+export const rectangleBg = rectangle;
+export const arrowImg = arrow;
+export const backImg = back;
+
+// planet textures
+export const mm = mImg;
+export const mn = mnImg;
+export const md = mdImg;
+export const ma = maImg;
+
+export const fm = fImg;
+export const fn = fnImg;
+export const fd = fdImg;
+export const fa = faImg;
+
+export const jm = jImg;
+export const jn = jnImg;
+export const jd = jdImg;
+export const ja = jaImg;
+
+export const ndm = ndImg;
+export const ndn = ndnImg;
+export const ndd = nddImg;
+export const nda = ndaImg;
+export const ndr = ndrImg;
+
+export const lm = lImg;
+export const ln = lnImg;
+export const ld = ldImg;
+export const la = laImg;
+
+export const sm = sImg;
+export const sn = snImg;
+export const sd = sdImg;
+export const sa = saImg;
+export const sr = srImg;
+
+export const im = iImg;
+export const inn = inImg;
+export const idd = idImg;
+export const ia = iaImg;
+export const ir = irImg;
+
+export const sun = sunImg;
+
+export const mar = marImg;
+export const marn = marnImg;
+export const marb = marbImg;
+
+export const em = emImg;
+export const eb = ebImg;
+export const es = esImg;
+export const ec = ecImg;
+export const en = enImg;
+
+// videos
+export const earthVd = earthMp4;
+
+export const loaderVd = loaderGif;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\App.jsx ===
+import React from "react";
+
+import { Route, Routes } from "react-router-dom";
+import ReactLenis from "@studio-freight/react-lenis";
+
+import Home from "./sections/Home";
+import PlanetLists from "./routes/PlanetLists";
+import PlanetDetail from "./routes/PlanetDetail";
+import ScrollToTop from "./components/ScrollToTop";
+
+const App = () => {
+  return (
+    <ReactLenis root>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/planets" element={<PlanetLists />} />
+        <Route path="/planets/:id" element={<PlanetDetail />} />
+      </Routes>
+    </ReactLenis>
+  );
+};
+
+export default App;
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\index.css ===
+/* fonts import */
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Orbitron:wght@400..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* font-family: "Manrope", sans-serif; */
+/* font-family: "Orbitron", sans-serif;  */
+
+:root {
+  --dark-bg: #0a1824;
+  --dark: #1a1a1a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  color: white;
+  width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  height: 100%;
+  user-select: none;
+  font-family: "Manrope", sans-serif;
+}
+
+/* components */
+@layer components {
+  .sub-text {
+    @apply font-manrope text-secondary;
+  }
+  /* kebab-case - stick to the kebab-case */
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+  .detail-sub-text {
+    @apply sub-text text-lg w-full text-center text-primary md:text-start md:w-[50vw];
+  }
+  .info-sub-text {
+    @apply tracking-widest text-secondary text-lg uppercase;
+  }
+  .nav-text {
+    @apply sub-text cursor-pointer transition-all;
+  }
+  .nav-hover-text-isBack {
+    @apply text-primary hover:text-secondary;
+  }
+  .nav-hover-text-notBack {
+    @apply text-secondary hover:text-primary;
+  }
+  .info-text {
+    @apply w-52 h-full flex-center flex-col gap-1;
+  }
+  .info-number {
+    @apply font-orbiton text-3xl font-bold;
+  }
+  .arrow {
+    @apply absolute right-5 md:right-16 top-16 cursor-pointer z-10 hover:border border-[#e0fbfc50] rounded-full transition-all;
+  }
+  .earth-title {
+    @apply font-orbiton text-8xl font-bold;
+  }
+  .underline-div-div {
+    @apply w-28 h-2 rounded-lg bg-skyBlue;
+  }
+}
+
+
+=== C:\Users\udayd\OneDrive\Desktop\3d-planets-main\3d-planets-main\src\main.jsx ===
+import React from "react";
+import ReactDOM from "react-dom/client";
+
+import { BrowserRouter } from "react-router-dom";
+
+import "./index.css";
+import App from "./App.jsx";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+);
+
+

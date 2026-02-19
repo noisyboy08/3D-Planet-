@@ -1,0 +1,139 @@
+﻿/* fonts import */
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Orbitron:wght@400..900&family=Space+Grotesk:wght@300..700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --dark-bg: #0a1824;
+  --dark: #1a1a1a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Only hide default cursor on non-touch devices */
+@media (hover: hover) and (pointer: fine) {
+  * { cursor: none !important; }
+}
+
+body {
+  color: white;
+  width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  height: 100%;
+  user-select: none;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+}
+
+/*  Custom Cursor (desktop only)  */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  background: #e0fbfc;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease, background 0.2s ease;
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid rgba(224, 251, 252, 0.6);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+  transform: translate(-50%, -50%);
+}
+.cursor-dot.hovering { width: 6px; height: 6px; background: #4cc9f0; }
+.cursor-ring.hovering { width: 48px; height: 48px; border-color: rgba(76,201,240,0.5); }
+
+/* Hide cursor elements on touch devices */
+@media (hover: none) {
+  .cursor-dot, .cursor-ring { display: none !important; }
+}
+
+/*  Global Loading Screen  */
+.global-loader {
+  position: fixed;
+  inset: 0;
+  background: #050d14;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+  padding: 1rem;
+}
+.global-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.loader-bar-track { width: min(240px, 80vw); height: 2px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 32px; overflow: hidden; }
+.loader-bar-fill { height: 100%; background: linear-gradient(90deg, #4cc9f0, #e0fbfc); border-radius: 2px; animation: loaderFill 2s ease forwards; }
+@keyframes loaderFill { 0% { width: 0%; } 60% { width: 75%; } 100% { width: 100%; } }
+.loader-planet-ring { width: 70px; height: 70px; border: 2px solid transparent; border-top-color: #4cc9f0; border-right-color: rgba(76,201,240,0.3); border-radius: 50%; animation: spinRing 1.2s linear infinite; }
+@keyframes spinRing { to { transform: rotate(360deg); } }
+
+/*  Glassmorphism Nav  */
+.nav-glass {
+  background: rgba(10, 24, 36, 0.55);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(224, 251, 252, 0.08);
+  transition: background 0.3s ease;
+}
+
+/*  Planet Cards  */
+.planet-card-wrapper {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
+  border-radius: 16px;
+}
+@media (hover: hover) {
+  .planet-card-wrapper:hover {
+    transform: translateY(-14px) scale(1.03);
+    box-shadow: 0 24px 64px rgba(76, 201, 240, 0.2), 0 0 0 1px rgba(224, 251, 252, 0.1);
+  }
+}
+
+/*  Underline div  */
+.underline-div {
+  width: 7rem;
+  height: 0.5rem;
+  border-radius: 0.5rem;
+  background: #4cc9f0;
+  margin-top: 0.75rem;
+}
+
+/*  Mobile hero title  */
+@media (max-width: 640px) {
+  .earth-title { font-size: 3.5rem !important; }
+  .detail-sub-text { font-size: 1rem !important; }
+}
+
+/*  components  */
+@layer components {
+  .sub-text { @apply font-manrope text-secondary; }
+  .flex-center { @apply flex justify-center items-center; }
+  .detail-sub-text { @apply sub-text text-base md:text-lg w-full text-center text-primary md:text-start md:w-[50vw]; }
+  .info-sub-text { @apply tracking-widest text-secondary text-sm md:text-lg uppercase; }
+  .nav-text { @apply sub-text cursor-pointer transition-all text-sm md:text-base; }
+  .nav-hover-text-isBack { @apply text-primary hover:text-secondary; }
+  .nav-hover-text-notBack { @apply text-secondary hover:text-primary; }
+  .info-text { @apply w-40 md:w-52 h-full flex-center flex-col gap-1; }
+  .info-number { @apply font-orbiton text-2xl md:text-3xl font-bold; }
+  .arrow { @apply absolute right-3 md:right-16 top-14 cursor-pointer z-10 hover:border border-[#e0fbfc50] rounded-full transition-all; }
+  .earth-title { @apply font-orbiton text-6xl sm:text-7xl md:text-8xl font-bold; }
+  .underline-div-div { @apply w-20 md:w-28 h-2 rounded-lg bg-skyBlue; }
+}
